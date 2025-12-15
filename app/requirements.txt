@@ -1,0 +1,4 @@
+clickhouse_connect==0.8.18
+fastapi==0.124.4
+Telethon==1.40.0
+uvicorn[standard]
