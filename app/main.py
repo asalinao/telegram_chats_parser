@@ -21,11 +21,11 @@ for attempt in range(3):
                                                      password=CLICKHOUSE_PASSWORD)
         break
     except Exception as e:
-        print(f"Attempt {attempt + 1} to connect to ClickHouse failed: {e}")
+        print(f"Attempt {attempt + 1} to connect to ClickHouse failed: {e}, username: {CLICKHOUSE_USERNAME}")
         if attempt == 2:
             raise e
         asyncio.sleep(2)
-        
+
 client_click = clickhouse_connect.get_client(host=CLICKHOUSE_HOST, 
                                              port=CLICKHOUSE_PORT, 
                                              username=CLICKHOUSE_USERNAME, 
