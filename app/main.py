@@ -8,10 +8,10 @@ from fastapi import FastAPI
 
 from telethon_service import dump_all_messages
 
-CLICKHOUSE_HOST = os.getenv("CLICKHOUSE_HOST")
-CLICKHOUSE_PORT = int(os.getenv("CLICKHOUSE_PORT"))
-CLICKHOUSE_USERNAME = os.getenv("CLICKHOUSE_USERNAME")
-CLICKHOUSE_PASSWORD = os.getenv("CLICKHOUSE_PASSWORD")
+CLICKHOUSE_HOST = os.getenv("CLICKHOUSE_HOST", "clickhouse")
+CLICKHOUSE_PORT = int(os.getenv("CLICKHOUSE_PORT", "8123"))
+CLICKHOUSE_USERNAME = os.getenv("CLICKHOUSE_USERNAME", "default")
+CLICKHOUSE_PASSWORD = os.getenv("CLICKHOUSE_PASSWORD", "")
 
 client_click = clickhouse_connect.get_client(host=CLICKHOUSE_HOST, 
                                              port=CLICKHOUSE_PORT, 
