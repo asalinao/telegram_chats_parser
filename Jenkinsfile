@@ -21,7 +21,7 @@ pipeline {
         stage('Login to GHCR') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'ghcr-creds',
+                    credentialsId: 'jenkins-github-credential',
                     usernameVariable: 'GH_USERNAME',
                     passwordVariable: 'GH_TOKEN'
                 )]) {
