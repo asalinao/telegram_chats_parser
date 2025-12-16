@@ -13,20 +13,18 @@ CLICKHOUSE_PORT = int(os.getenv("CLICKHOUSE_PORT", "8123"))
 CLICKHOUSE_USERNAME = os.getenv("CLICKHOUSE_USERNAME", "default")
 CLICKHOUSE_PASSWORD = os.getenv("CLICKHOUSE_PASSWORD", "")
 
-# for attempt in range(3):
-#     try:
-#         client_click = clickhouse_connect.get_client(host=CLICKHOUSE_HOST, 
-#                                                      port=CLICKHOUSE_PORT, 
-#                                                      username=CLICKHOUSE_USERNAME, 
-#                                                      password=CLICKHOUSE_PASSWORD)
-#         break
-#     except Exception as e:
-#         print(f"Attempt {attempt + 1} to connect to ClickHouse failed: {e}, username: {CLICKHOUSE_USERNAME}")
-#         if attempt == 2:
-#             raise e
-#         asyncio.sleep(2)
-
-client_click = None
+for attempt in range(3):
+    try:
+        client_click = clickhouse_connect.get_client(host=CLICKHOUSE_HOST, 
+                                                     port=CLICKHOUSE_PORT, 
+                                                     username=CLICKHOUSE_USERNAME, 
+                                                     password=CLICKHOUSE_PASSWORD)
+        break
+    except Exception as e:
+        print(f"Attempt {attempt + 1} to connect to ClickHouse failed: {e}")
+        if attempt == 2:
+            raise e
+        asyncio.sleep(2)
 
 clients_dicts = []
 with open('telegram.csv', newline="", encoding="utf-8") as f:
