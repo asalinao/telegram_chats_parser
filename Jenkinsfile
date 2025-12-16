@@ -37,5 +37,19 @@ pipeline {
                 bat "docker push %IMAGE_NAME%"
             }
         }
+
+        stage('Deploy to VM') {
+            steps {
+                sshagent(['vm-ssh-credentials-id']) {
+                    sh """
+                    ssh ${DEPLOY_HOST} '
+                      cd ${DEPLOY_PATH} &&
+                      docker-compose pull &&
+                      docker-compose up -d --build
+                    '
+                    """
+                }
+            }
+        }
     }
 }
