@@ -27,7 +27,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - ./telegram.csv:/app/telegram.csv
 
 volumes:
   clickhouse_data:
