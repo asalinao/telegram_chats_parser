@@ -44,11 +44,14 @@ pipeline {
         stage('Deploy to VM') {
             steps {
                 sshagent(['vm-ssh']) {
-                    sh """
-                    ssh ${DEPLOY_HOST} '
-                      cd ${DEPLOY_PATH} &&
-                      docker-compose pull &&
-                      docker-compose up -d --build
+                    bat """
+                    ssh -o StrictHostKeyChecking=no \
+                        -o PreferredAuthentications=publickey \
+                        -o PasswordAuthentication=no \
+                        ${DEPLOY_USER}@${DEPLOY_HOST} '
+                      cd ${DEPLOY_PATH} 
+                      docker compose -f docker-compose.prod.yml pull
+                      docker compose -f docker-compose.prod.yml up -d --build
                     '
                     """
                 }
