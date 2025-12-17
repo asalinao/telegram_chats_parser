@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse
+    ports:
+      - "8123:8123"  # HTTP
+      - "9000:9000"  # TCP
+    environment:
+      CLICKHOUSE_USER: "${CLICKHOUSE_USERNAME}"
+      CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./init/:/docker-entrypoint-initdb.d/ 
+
+  app:
+    imege: "ghcr.io/asalinao/telegram_chats_parser_app:latest"
+    container_name: fastapi_app
+    depends_on:
+      - clickhouse
+    environment:
+      CLICKHOUSE_HOST: "${CLICKHOUSE_HOST}"
+      CLICKHOUSE_PORT: "${CLICKHOUSE_PORT}"
+      CLICKHOUSE_USERNAME: "${CLICKHOUSE_USERNAME}"
+      CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
+    ports:
+      - "8000:8000"
+
+volumes:
+  clickhouse_data:

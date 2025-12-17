@@ -15,7 +15,7 @@ services:
       - ./init/:/docker-entrypoint-initdb.d/ 
 
   app:
-    build: .
+    buid: .
     container_name: fastapi_app
     depends_on:
       - clickhouse
