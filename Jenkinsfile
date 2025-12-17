@@ -43,7 +43,7 @@ pipeline {
 
         stage('Deploy to VM') {
             steps {
-                sshagent(['vm-ssh-credentials-id']) {
+                sshagent(['vm-ssh']) {
                     sh """
                     ssh ${DEPLOY_HOST} '
                       cd ${DEPLOY_PATH} &&
