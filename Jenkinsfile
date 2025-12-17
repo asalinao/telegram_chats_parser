@@ -44,7 +44,7 @@ pipeline {
         stage('Deploy to VM') {
             steps {
                 sshagent(['vm-ssh']) {
-                    bat 'ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cd $DEPLOY_PATH && docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d --build"'
+                    bat 'ssh -o StrictHostKeyChecking=no %DEPLOY_USER%@$%DEPLOY_HOST% "cd %DEPLOY_PATH% && docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d --build"'
                 }
             }
         }
