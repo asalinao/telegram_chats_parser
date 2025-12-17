@@ -5,7 +5,7 @@ pipeline {
         IMAGE_NAME = "ghcr.io/asalinao/telegram_chats_parser_app:latest"
         DEPLOY_HOST = "192.168.245.130"
         DEPLOY_USER = "asalin"
-        DEPLOY_PATH = "/opt/project" 
+        DEPLOY_PATH = "/opt/app" 
     }
 
     stages {
