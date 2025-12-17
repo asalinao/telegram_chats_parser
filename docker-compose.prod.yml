@@ -26,6 +26,8 @@ services:
       CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
     ports:
       - "8000:8000"
+    volumes:
+      - .:/app
 
 volumes:
   clickhouse_data:
