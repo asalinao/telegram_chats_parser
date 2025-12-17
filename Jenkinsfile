@@ -48,11 +48,11 @@ pipeline {
                     ssh -o StrictHostKeyChecking=no \
                         -o PreferredAuthentications=publickey \
                         -o PasswordAuthentication=no \
-                        ${DEPLOY_USER}@${DEPLOY_HOST} '
+                        ${DEPLOY_USER}@${DEPLOY_HOST} "
                       cd ${DEPLOY_PATH} 
                       docker compose -f docker-compose.prod.yml pull
                       docker compose -f docker-compose.prod.yml up -d --build
-                    '
+                    "
                     """
                 }
             }
