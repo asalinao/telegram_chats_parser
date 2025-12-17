@@ -15,7 +15,7 @@ services:
       - ./init/:/docker-entrypoint-initdb.d/ 
 
   app:
-    imege: "ghcr.io/asalinao/telegram_chats_parser_app:latest"
+    image: "ghcr.io/asalinao/telegram_chats_parser_app:latest"
     container_name: fastapi_app
     depends_on:
       - clickhouse
