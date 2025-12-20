@@ -34,8 +34,8 @@ with open('telegram.csv', newline="", encoding="utf-8") as f:
 
 clients_tg = []
 for c_dict in clients_dicts:
-	client = TelegramClient(f"../sessions/session_{c_dict['number'][-4:]}", api_id=c_dict['api_id'], api_hash=c_dict['api_hash'], device_model="iPhone 16", system_version="IOS 26.3")
-	clients_tg.append(client)
+    client = TelegramClient(f"../sessions/session_{c_dict['number'][-4:]}", api_id=c_dict['api_id'], api_hash=c_dict['api_hash'], device_model="iPhone 16", system_version="IOS 26.3")
+    clients_tg.append(client)
 
 async def dump_chat_by_url(clients_tg, client_click, url):
 	await asyncio.gather(*(client.start() for client in clients_tg))
