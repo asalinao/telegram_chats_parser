@@ -5,3 +5,6 @@ __pycache__
 .vscode
 .git
 .gitignore
+*.session
+telegram.csv
+auth_telegram.py

@@ -27,14 +27,14 @@ for attempt in range(3):
         asyncio.sleep(2)
 
 clients_dicts = []
-with open('sessions/telegram.csv', newline="", encoding="utf-8") as f:
+with open('telegram.csv', newline="", encoding="utf-8") as f:
 	reader = csv.DictReader(f)
 	for row in reader:
 		clients_dicts.append(row)
 
 clients_tg = []
 for c_dict in clients_dicts:
-    client = TelegramClient(f"sessions/session_{c_dict['number'][-4:]}", api_id=c_dict['api_id'], api_hash=c_dict['api_hash'], device_model="iPhone 16", system_version="IOS 26.3")
+    client = TelegramClient(f"/sessions/session_{c_dict['number'][-4:]}", api_id=c_dict['api_id'], api_hash=c_dict['api_hash'], device_model="iPhone 16", system_version="IOS 26.3")
     clients_tg.append(client)
 
 async def dump_chat_by_url(clients_tg, client_click, url):

@@ -4,3 +4,4 @@ venv/
 .env
 *.session
 telegram.csv
+auth_telegram.py
