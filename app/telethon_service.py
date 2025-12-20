@@ -1,12 +1,72 @@
-from telethon.tl.functions.messages import GetHistoryRequest
+import asyncio
+import re
+from datetime import datetime, timezone
+import time
+from telethon import TelegramClient
+from telethon.tl.functions.messages import GetHistoryRequest, ImportChatInviteRequest
+from telethon.tl.functions.channels import GetFullChannelRequest, JoinChannelRequest
 from telethon.tl.types import (
     MessageMediaPhoto, MessageMediaDocument, PeerUser, PeerChat, PeerChannel, 
 	DocumentAttributeAudio, DocumentAttributeVideo, DocumentAttributeAnimated,
 	DocumentAttributeSticker, DocumentAttributeFilename
 )
-from telethon.tl.functions.channels import GetFullChannelRequest
-from datetime import datetime, timezone
-import time
+from telethon.errors import (
+    UserAlreadyParticipantError,
+    InviteHashExpiredError,
+    InviteHashInvalidError,
+    FloodWaitError,
+)
+
+
+async def join_chat_for_all(
+    chat_url: str,
+    clients: list[TelegramClient],
+    delay: float = 1.5,
+):
+    is_private = "+" in chat_url or "joinchat" in chat_url
+
+    if is_private:
+        invite_hash = re.split(r"[+/]", chat_url)[-1]
+    else:
+        username = chat_url.rstrip("/").split("/")[-1]
+
+    for client in clients:
+        try:
+            # Авто-старт клиента
+            if not client.is_connected():
+                await client.start()
+                if not await client.is_user_authorized():
+                    print(f"[!] {client.session.filename} не авторизован")
+                    continue
+
+            # Вступление в чат
+            if is_private:
+                await client(ImportChatInviteRequest(invite_hash))
+            else:
+                await client(JoinChannelRequest(username))
+
+            print(f"[+] {client.session.filename}: joined")
+
+        except UserAlreadyParticipantError:
+            print(f"[=] {client.session.filename}: already joined")
+
+        except InviteHashExpiredError:
+            print(f"[!] Invite expired: {chat_url}")
+            break
+
+        except InviteHashInvalidError:
+            print(f"[!] Invalid invite: {chat_url}")
+            break
+
+        except FloodWaitError as e:
+            print(f"[⏳] FloodWait {e.seconds}s for {client.session.filename}")
+            await asyncio.sleep(e.seconds)
+
+        except Exception as e:
+            print(f"[x] {client.session.filename}: {type(e).__name__} — {e}")
+
+        await asyncio.sleep(delay)
+
 
 async def get_channel_info(client_tg, link: str):
     await client_tg.start()
@@ -29,8 +89,8 @@ async def get_channel_info(client_tg, link: str):
         "link": link,
         "private": 0 if getattr(channel, "username", None) else 1,
         "participants": getattr(full.full_chat, "participants_count", 0),
-        "forum": 1 if getattr(channel, "megagroup", False) else 0,
-        "write_allowed": 1 if getattr(channel, "default_banned_rights", None) is None else 0,
+        "forum": 1 if getattr(full.full_chat, "forum", False) else 0,
+        "write_allowed": 0 if getattr(channel, "default_banned_rights", None) and getattr(channel.default_banned_rights, "send_messages", False) else 1,
         "participants_visible": 1 if hasattr(full.full_chat, "participants_count") else 0,
         "processed_dttm": datetime.utcnow()
     }

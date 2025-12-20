@@ -6,7 +6,7 @@ import os
 
 from fastapi import FastAPI
 
-from telethon_service import dump_all_messages, get_channel_info
+from telethon_service import dump_all_messages, get_channel_info, join_chat_for_all
 
 CLICKHOUSE_HOST = os.getenv("CLICKHOUSE_HOST", "clickhouse")
 CLICKHOUSE_PORT = int(os.getenv("CLICKHOUSE_PORT", 8123))
@@ -78,39 +78,40 @@ def get_messages_by_user_id_point(user_id: int):
     else:
         return {"error": "Messages not found"}
     
-# @app.get("/get_media_messages_by_user_id")
-# def get_media_messages_by_user_id_point(user_id: int):
-#     query = f'''
-#     select * 
-# 	from dwh.messages
-# 	where user_id = {user_id}
-#     and media_type is not null 
-#     and sticker = 0
-#     '''
+@app.get("/get_media_messages_by_user_id")
+def get_media_messages_by_user_id_point(user_id: int):
+    query = f'''
+    select * 
+	from dwh.messages
+	where user_id = {user_id}
+    and media_type is not null 
+    and sticker = 0
+    '''
 
-#     result = client_click.query(query)
-#     query_result = result.result_rows 
-#     columns = result.column_names
+    result = client_click.query(query)
+    query_result = result.result_rows 
+    columns = result.column_names
     
-#     messages_list = []
-#     if query_result:
-#         for msg in query_result:
-#             raw_msg = dict(zip(columns, msg))
-#             msg_to_append = {
-#                 "message_id": raw_msg["message_id"],
-#                 "report_dttm": raw_msg["report_dttm"],
-#                 "text": raw_msg["text"],
-#                 "media_type": raw_msg["media_type"],
-#                 "spoiler": raw_msg["spoiler"],
-#                 "messsage link": f"https://t.me/c/{raw_msg['chat_id']}/{raw_msg['message_id']}"
-#             }
-#             messages_list.append(msg_to_append)
-#         print(messages_list)
-#         return {"messages": messages_list}
-#     else:
-#         return {"error": "Messages not found"}
+    messages_list = []
+    if query_result:
+        for msg in query_result:
+            raw_msg = dict(zip(columns, msg))
+            msg_to_append = {
+                "message_id": raw_msg["message_id"],
+                "report_dttm": raw_msg["report_dttm"],
+                "text": raw_msg["text"],
+                "media_type": raw_msg["media_type"],
+                "spoiler": raw_msg["spoiler"],
+                "messsage link": f"https://t.me/c/{raw_msg['chat_id']}/{raw_msg['message_id']}"
+            }
+            messages_list.append(msg_to_append)
+        print(messages_list)
+        return {"messages": messages_list}
+    else:
+        return {"error": "Messages not found"}
 
 @app.get("/get_channel_info_by_url")
-async def get_channel_info_by_url_point(url: str):
+async def get_channel_info_by_url_point(url: str, dump_now: bool = False, priority: int = 0):
+     await join_chat_for_all(url, clients_tg, delay=60)
      info = await get_channel_info(clients_tg[0], url)
      return info
