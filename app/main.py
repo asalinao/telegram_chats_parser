@@ -6,7 +6,7 @@ import os
 
 from fastapi import FastAPI
 
-from telethon_service import dump_all_messages
+from telethon_service import dump_all_messages, get_channel_info
 
 CLICKHOUSE_HOST = os.getenv("CLICKHOUSE_HOST", "clickhouse")
 CLICKHOUSE_PORT = int(os.getenv("CLICKHOUSE_PORT", 8123))
@@ -109,3 +109,8 @@ def get_media_messages_by_user_id_point(user_id: int):
         return {"messages": messages_list}
     else:
         return {"error": "Messages not found"}
+
+@app.get("/get_channel_info_by_url")
+async def get_channel_info_by_url_point(url: str):
+     info = await get_channel_info(clients_tg[0], url)
+     return info

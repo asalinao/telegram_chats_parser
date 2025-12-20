@@ -4,8 +4,38 @@ from telethon.tl.types import (
 	DocumentAttributeAudio, DocumentAttributeVideo, DocumentAttributeAnimated,
 	DocumentAttributeSticker, DocumentAttributeFilename
 )
+from telethon.tl.functions.channels import GetFullChannelRequest
 from datetime import datetime, timezone
 import time
+
+async def get_channel_info(client_tg, link: str):
+    await client_tg.start()
+    
+    # Получаем объект канала
+    try:
+        full = await client_tg(GetFullChannelRequest(link))
+    except Exception as e:
+        print("Ошибка при получении канала:", e)
+        return None
+    
+    channel = full.chats[0] if full.chats else None
+    if not channel:
+        return None
+
+    # Основная информация
+    info = {
+        "chat_id": channel.id,
+        "name": getattr(channel, "title", ""),
+        "link": link,
+        "private": 0 if getattr(channel, "username", None) else 1,
+        "participants": getattr(full.full_chat, "participants_count", 0),
+        "forum": 1 if getattr(channel, "megagroup", False) else 0,
+        "write_allowed": 1 if getattr(channel, "default_banned_rights", None) is None else 0,
+        "participants_visible": 1 if hasattr(full.full_chat, "participants_count") else 0,
+        "processed_dttm": datetime.utcnow()
+    }
+
+    return info
 
 
 async def dump_all_messages(clients_tg, client_click, url):
