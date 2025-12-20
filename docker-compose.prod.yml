@@ -26,6 +26,7 @@ services:
       - "8000:8000"
     volumes:
       - ./telegram.csv:/app/telegram.csv
+      - ./sessions:/sessions
 
 volumes:
   clickhouse_data:
