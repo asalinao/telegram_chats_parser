@@ -27,7 +27,7 @@ for attempt in range(3):
         asyncio.sleep(2)
 
 clients_dicts = []
-with open('telegram.csv', newline="", encoding="utf-8") as f:
+with open('sessions/telegram.csv', newline="", encoding="utf-8") as f:
 	reader = csv.DictReader(f)
 	for row in reader:
 		clients_dicts.append(row)

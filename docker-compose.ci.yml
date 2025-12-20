@@ -24,6 +24,8 @@ services:
       CLICKHOUSE_PASSWORD: "${CLICKHOUSE_PASSWORD}"
     ports:
       - "8000:8000"
+    volumes:
+      - ./sessions:/sessions
 
 volumes:
   clickhouse_data:
