@@ -112,6 +112,18 @@ def get_media_messages_by_user_id_point(user_id: int):
 
 @app.get("/get_channel_info_by_url")
 async def get_channel_info_by_url_point(url: str, dump_now: bool = False, priority: int = 0):
-     await join_chat_for_all(url, clients_tg, delay=60)
-     info = await get_channel_info(clients_tg[0], url)
-     return info
+    info = await get_channel_info(clients_tg[0], url)
+    info["priority"] = priority
+
+    await join_chat_for_all(url, clients_tg, delay=60)
+
+    if dump_now:
+        await dump_all_messages(clients_tg, client_click, url)
+
+    FIELDS = [
+        "chat_id", "name", "link", "private", "participants",
+        "forum", "write_allowed", "participants_visible", "processed_dttm", "priority"
+    ]
+    client_click.insert('dwh.chats', info, column_names=FIELDS)
+
+    return info
